@@ -1,0 +1,13 @@
+# Your mail, notes and draft bodies never leave this PC.
+mail/
+notes/*
+!notes/README.md
+drafts/*
+!drafts/.gitkeep
+.last-answer.txt
+body.txt
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/

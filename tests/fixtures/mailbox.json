@@ -1,0 +1,130 @@
+{
+  "note": "A made-up mailbox. Names, addresses and policies are fictional.",
+  "messages": [
+    {
+      "entry_id": "EID-FIN-2025-PCARD",
+      "folder": "Inbox",
+      "date": "2025-03-04T09:12:00",
+      "from_name": "Finance Office",
+      "from": "finance@example.edu",
+      "to": "dept-staff@example.edu",
+      "subject": "P-card and T-card basics for department staff",
+      "body": "Hello all,\n\nA refresher on the two cards.\n\nP-card (procurement card): supplies, registrations, software under $5,000, and visitor parking for guests of the department. Put the visitor's name and the business purpose in the memo line.\n\nT-card (travel card): airfare, hotels, and ground transport while an employee is on university travel. Parking at the airport or at a conference hotel goes on the T-card.\n\nReceipts for both cards are uploaded in the expense system.\n\nFinance Office"
+    },
+    {
+      "entry_id": "EID-FIN-2026-PORTAL",
+      "folder": "Inbox",
+      "date": "2026-09-15T14:03:00",
+      "from_name": "Finance Office",
+      "from": "finance@example.edu",
+      "to": "dept-staff@example.edu",
+      "subject": "Update: visitor parking validations move to the Parking Services portal",
+      "attachments": ["parking-portal-guide.pdf"],
+      "body": "Hello all,\n\nStarting October 1, 2026, visitor parking is no longer an allowable P-card purchase.\n\nBuy visitor parking validations in the Parking Services portal (parking.example.edu/validations). Charge them to your department SpeedType; the portal asks for it at checkout. One validation covers one vehicle for one day in the visitor lots.\n\nThe T-card is unchanged: it covers an employee's own parking while on university travel, never a visitor's.\n\nThe attached guide has screenshots.\n\nFinance Office"
+    },
+    {
+      "entry_id": "EID-COLLEAGUE-SPEAKER",
+      "folder": "Inbox",
+      "date": "2026-09-20T10:41:00",
+      "from_name": "Dana Whitfield",
+      "from": "dana.whitfield@example.edu",
+      "to": "me@example.edu",
+      "conversation_id": "CONV-SPEAKER-PARKING",
+      "subject": "Parking for Friday's seminar speaker?",
+      "body": "Hi,\n\nOur seminar speaker drives in on Friday. How do I pay for her parking now? I remember it used to go on the P-card.\n\nThanks,\nDana"
+    },
+    {
+      "entry_id": "EID-ME-SPEAKER-REPLY",
+      "folder": "Sent Items",
+      "date": "2026-09-20T11:05:00",
+      "from_name": "Me",
+      "from": "me@example.edu",
+      "to": "dana.whitfield@example.edu",
+      "conversation_id": "CONV-SPEAKER-PARKING",
+      "subject": "RE: Parking for Friday's seminar speaker?",
+      "body": "Hi Dana,\n\nNot the P-card any more. Buy a validation in the Parking Services portal and charge it to SpeedType 1234567. Finance sent the new rule on September 15; the PDF on that email has the screenshots.\n\nBest,\nMe"
+    },
+    {
+      "entry_id": "EID-FIN-TCARD-RECEIPTS",
+      "folder": "Inbox",
+      "date": "2026-08-02T08:00:00",
+      "from_name": "Finance Office",
+      "from": "finance@example.edu",
+      "to": "dept-staff@example.edu",
+      "subject": "Reminder: T-card receipts are due within 30 days",
+      "body": "Reminder: every T-card charge needs its receipt uploaded in the expense system within 30 days of the trip's end. Charges without receipts after 60 days are deducted from the traveler's pay.\n\nFinance Office"
+    },
+    {
+      "entry_id": "EID-IT-MAINT",
+      "folder": "Inbox",
+      "date": "2026-09-18T17:30:00",
+      "from_name": "IT Service Desk",
+      "from": "servicedesk@example.edu",
+      "to": "all-staff@example.edu",
+      "subject": "Scheduled maintenance: email outage Saturday 02:00-04:00",
+      "body": "Email and calendar will be unavailable Saturday from 02:00 to 04:00 for maintenance. No action is needed.\n\nIT Service Desk"
+    },
+    {
+      "entry_id": "EID-CATERING",
+      "folder": "Inbox",
+      "date": "2026-09-19T12:15:00",
+      "from_name": "Campus Catering",
+      "from": "catering@example.edu",
+      "to": "me@example.edu",
+      "subject": "Quote #4471: seminar reception, Friday",
+      "attachments": ["quote-4471.pdf"],
+      "body": "Attached is the quote for Friday's reception: 40 guests, light appetizers, $612.00. Reply to confirm by Wednesday.\n\nCampus Catering"
+    },
+    {
+      "entry_id": "EID-ROOM",
+      "folder": "Inbox",
+      "date": "2026-09-19T12:20:00",
+      "from_name": "Room Reservations",
+      "from": "rooms@example.edu",
+      "to": "me@example.edu",
+      "subject": "Confirmed: ECCR 265, Friday 15:00-17:00",
+      "body": "Your reservation is confirmed.\nRoom: ECCR 265\nDate: Friday\nTime: 15:00-17:00\nPurpose: department seminar"
+    },
+    {
+      "entry_id": "EID-NEWSLETTER",
+      "folder": "Inbox",
+      "date": "2026-09-21T06:00:00",
+      "from_name": "Campus News",
+      "from": "news@example.edu",
+      "to": "all-staff@example.edu",
+      "subject": "This week on campus",
+      "body": "Fall festival Thursday on the quad. Flu shots in the health center all week. Parking Services reminds everyone that permit renewals close September 30."
+    },
+    {
+      "entry_id": "EID-BUDGET-ODD-SUBJECT",
+      "folder": "Inbox",
+      "date": "2026-09-22T16:45:00",
+      "from_name": "Priya Nair",
+      "from": "priya.nair@example.edu",
+      "to": "me@example.edu",
+      "cc": "dept-chair@example.edu",
+      "subject": "Re: Q3 budget?? \"final\" / draft: v2 <please review>",
+      "body": "Attached is nothing yet; I will send the sheet tomorrow.\r\n\r\n\r\n\r\nPriya   "
+    },
+    {
+      "entry_id": "EID-LUNCH",
+      "folder": "Inbox",
+      "date": "2026-09-23T09:02:00",
+      "from_name": "Dana Whitfield",
+      "from": "dana.whitfield@example.edu",
+      "to": "me@example.edu",
+      "subject": "Lunch Thursday?",
+      "body": "Lunch Thursday at the union? 12:30?"
+    },
+    {
+      "entry_id": "EID-ME-LUNCH",
+      "folder": "Sent Items",
+      "date": "2026-09-23T09:40:00",
+      "from_name": "Me",
+      "from": "me@example.edu",
+      "to": "dana.whitfield@example.edu",
+      "subject": "RE: Lunch Thursday?",
+      "body": "12:30 works. See you there."
+    }
+  ]
+}

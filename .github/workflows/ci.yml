@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -r requirements.txt -r requirements-dev.txt
+      - run: python -m pytest -q
+      # On Windows the real pywin32 is installed. Without Outlook on the
+      # runner the scripts must still answer cleanly with exit code 2.
+      - name: pywin32 imports and the scripts report a missing Outlook
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          python -c "import win32com.client, pythoncom; print('pywin32 ok')"
+          python outlook_dump.py selftest; if ($LASTEXITCODE -ne 2) { exit 1 }
+          python outlook_dump.py status;   if ($LASTEXITCODE -ne 0) { exit 1 }
+          "hello" | Out-File -Encoding utf8 body.txt
+          python make_draft.py --to a@example.edu --subject s --body-file body.txt; if ($LASTEXITCODE -ne 2) { exit 1 }
+      - name: scripts parse and print help
+        run: |
+          python outlook_dump.py --help
+          python make_draft.py --help
