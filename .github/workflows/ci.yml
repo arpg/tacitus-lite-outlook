@@ -31,6 +31,7 @@ jobs:
           python outlook_dump.py status;   if ($LASTEXITCODE -ne 0) { exit 1 }
           "hello" | Out-File -Encoding utf8 body.txt
           python make_draft.py --to a@example.edu --subject s --body-file body.txt; if ($LASTEXITCODE -ne 2) { exit 1 }
+          exit 0
       - name: scripts parse and print help
         run: |
           python outlook_dump.py --help
