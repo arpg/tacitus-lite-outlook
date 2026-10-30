@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
 
 jobs:
   tests:
@@ -27,12 +28,70 @@ jobs:
         shell: pwsh
         run: |
           python -c "import win32com.client, pythoncom; print('pywin32 ok')"
-          python outlook_dump.py selftest; if ($LASTEXITCODE -ne 2) { exit 1 }
-          python outlook_dump.py status;   if ($LASTEXITCODE -ne 0) { exit 1 }
+          python tacitus_lite.py selftest; if ($LASTEXITCODE -ne 2) { exit 1 }
+          python tacitus_lite.py status;   if ($LASTEXITCODE -ne 0) { exit 1 }
           "hello" | Out-File -Encoding utf8 body.txt
-          python make_draft.py --to a@example.edu --subject s --body-file body.txt; if ($LASTEXITCODE -ne 2) { exit 1 }
+          python tacitus_lite.py draft --to a@example.edu --subject s --body-file body.txt; if ($LASTEXITCODE -ne 2) { exit 1 }
           exit 0
       - name: scripts parse and print help
         run: |
+          python tacitus_lite.py --help
           python outlook_dump.py --help
           python make_draft.py --help
+
+  installer:
+    # Freeze with PyInstaller, build the Inno Setup installer, then install
+    # and uninstall it silently on the runner. No Outlook there, so the
+    # frozen program must report that cleanly (exit 2) and log it.
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt pyinstaller
+      - name: freeze
+        run: pyinstaller --noconfirm --clean installer/tacitus-lite.spec
+      - name: the frozen program runs (console and windowless)
+        shell: pwsh
+        run: |
+          $env:TACITUS_LITE_HOME = "$env:RUNNER_TEMP\home"
+          .\dist\TacitusLite\tacitus-lite.exe version; if ($LASTEXITCODE -ne 0) { exit 1 }
+          .\dist\TacitusLite\tacitus-lite.exe selftest; if ($LASTEXITCODE -ne 2) { exit 1 }
+          Start-Process -Wait -FilePath .\dist\TacitusLite\tacitus-lite-bg.exe -ArgumentList dump
+          Get-Content "$env:TACITUS_LITE_HOME\mail\dump.log"
+          if (-not (Select-String -Path "$env:TACITUS_LITE_HOME\mail\dump.log" -Pattern "Outlook not available" -Quiet)) { exit 1 }
+          exit 0
+      - name: build the installer
+        shell: pwsh
+        run: |
+          $env:TACITUS_LITE_VERSION = (python -c "import outlook_lite; print(outlook_lite.__version__)")
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\setup.iss
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Get-ChildItem installer\Output
+      - name: silent install, check, uninstall
+        shell: pwsh
+        run: |
+          Start-Process -Wait -FilePath installer\Output\TacitusLiteOutlook-Setup.exe -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
+          $app = "$env:LOCALAPPDATA\Programs\TacitusLite"
+          $docs = [Environment]::GetFolderPath("MyDocuments")
+          foreach ($f in "$app\tacitus-lite.exe", "$app\tacitus-lite-bg.exe", "$docs\OutlookMail\AGENTS.md", "$docs\OutlookMail\notes\README.md", "$docs\OutlookMail\mail", "$docs\OutlookMail\drafts") {
+            if (-not (Test-Path $f)) { Write-Host "missing $f"; exit 1 }
+            Write-Host "ok $f"
+          }
+          schtasks /Query /TN "Tacitus Lite mail dump" /V /FO LIST; if ($LASTEXITCODE -ne 0) { exit 1 }
+          $path = [Environment]::GetEnvironmentVariable("Path", "User")
+          if ($path -notlike "*TacitusLite*") { Write-Host "PATH: $path"; exit 1 }
+          & "$app\tacitus-lite.exe" home; if ($LASTEXITCODE -ne 0) { exit 1 }
+          & "$app\tacitus-lite.exe" status; if ($LASTEXITCODE -ne 0) { exit 1 }
+          $un = Get-ChildItem "$app\unins*.exe" | Select-Object -First 1
+          Start-Process -Wait -FilePath $un.FullName -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
+          if (Test-Path "$app\tacitus-lite.exe") { Write-Host "program still installed"; exit 1 }
+          schtasks /Query /TN "Tacitus Lite mail dump" 2>$null; if ($LASTEXITCODE -eq 0) { Write-Host "task still registered"; exit 1 }
+          if (-not (Test-Path "$docs\OutlookMail\AGENTS.md")) { Write-Host "uninstall removed the mail folder"; exit 1 }
+          Write-Host "install and uninstall ok"
+          exit 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TacitusLiteOutlook-Setup
+          path: installer/Output/TacitusLiteOutlook-Setup.exe

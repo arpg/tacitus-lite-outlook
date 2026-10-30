@@ -27,7 +27,7 @@ $py = (Get-Command py -ErrorAction SilentlyContinue)
 if (-not $py) { $py = Get-Command python -ErrorAction SilentlyContinue }
 if (-not $py) { throw "Python is not on PATH. Install it from python.org and tick 'Add python.exe to PATH'." }
 
-$args = "outlook_dump.py"
+$args = "tacitus_lite.py dump"
 if ($NoAddresses) { $args += " --no-addresses" }
 
 # pythonw has no console window; the task runs while you are logged in,

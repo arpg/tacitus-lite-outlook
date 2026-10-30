@@ -32,66 +32,64 @@ Dana about Friday's speaker".
 - `rg` (ripgrep) makes searching fast. The Codex CLI brings its own; for
   anything else, `winget install BurntSushi.ripgrep.MSVC`.
 
-## Install (10 minutes)
+## Install
 
-Open **PowerShell** (not as administrator) and run, one line at a time:
+Download `TacitusLiteOutlook-Setup.exe` from the
+[latest release](https://github.com/arpg/tacitus-lite-outlook/releases/latest)
+and run it. It installs for your user only (no administrator), so
+Windows SmartScreen may say "Windows protected your PC" because the
+file is not code-signed: click **More info**, then **Run anyway**.
 
-```powershell
-cd $HOME\Documents
-git clone https://github.com/arpg/tacitus-lite-outlook.git
-cd tacitus-lite-outlook
-py -m pip install -r requirements.txt
-py outlook_dump.py selftest --draft
-```
+The installer:
 
-If you have no `git`, download the ZIP from GitHub's green **Code**
-button and unzip it into `Documents` instead of the `git clone` line.
+- puts the program in `%LOCALAPPDATA%\Programs\TacitusLite` and on your PATH;
+- creates `Documents\OutlookMail` with `AGENTS.md`, `mail\`, `notes\` and `drafts\`;
+- registers a scheduled task that copies new mail every 30 minutes while you are logged in;
+- adds a **Tacitus Lite** folder to the Start menu: *Self-test*, *Copy all
+  mail now*, *Copy new mail now*, *Status*, *Mail folder*, *Ask Codex*, *Uninstall*;
+- offers to run the self-test when it finishes.
 
-`selftest` prints a `PASS` line for each step: it connects to Outlook,
-names your account, opens the Inbox and Sent Items, reads three
+The self-test prints a `PASS` line for each step: it connects to
+Outlook, names your account, opens the Inbox and Sent Items, reads three
 messages from each, copies five to a temporary folder, and saves a
 draft addressed to you (delete it from Drafts afterwards). The last line
 is `ALL PASS`. If a step says `FAIL`, the line names the step; the
 usual causes are the New Outlook toggle and Outlook not being open.
 
 If Outlook showed a window saying "A program is trying to access e-mail
-address information" during the selftest, click Allow, and add
-`--no-addresses` to the scheduled task below: the files then carry
-sender names without addresses, and nothing waits on a prompt.
+address information" during the self-test, click Allow. Then open Task
+Scheduler, find "Tacitus Lite mail dump", and add ` --no-addresses` to
+the action's arguments: the files then carry sender names without
+addresses, and nothing waits on a prompt.
 
-Then copy your mail:
+Then click **Start > Tacitus Lite > Copy all mail now**. The first run
+reads everything and takes a few minutes for a large mailbox (about a
+thousand messages a minute). It prints a count per folder when it
+finishes.
 
-```powershell
-py outlook_dump.py --full
-```
-
-The first run reads everything and takes a few minutes for a large
-mailbox (about a thousand messages a minute). It prints a count per
-folder when it finishes. To include a folder of your own, name it with
-its path: `py outlook_dump.py --full --folders Inbox "Sent Items" "Inbox/Projects"`.
-
-### Keep it fresh
-
-Run this once; it registers a Windows scheduled task that copies new
-mail every 30 minutes while you are logged in:
+### From source instead (for developers)
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\setup-task.ps1
+git clone https://github.com/arpg/tacitus-lite-outlook.git
+cd tacitus-lite-outlook
+py -m pip install -r requirements.txt
+py tacitus_lite.py selftest --draft
+py tacitus_lite.py dump --full
+powershell -ExecutionPolicy Bypass -File .\setup-task.ps1     # the 30-minute task
 ```
 
-`.\setup-task.ps1 -Remove` deletes the task. `py outlook_dump.py status`
-shows what is on disk.
+From a checkout the mail folder is the checkout itself. To include a
+folder of your own: `py tacitus_lite.py dump --full --folders Inbox "Sent Items" "Inbox/Projects"`.
+`TACITUS_LITE_HOME` points either install at another folder.
 
 ## Ask questions
 
-In PowerShell, in the same folder:
-
-```powershell
-codex
-```
-
-(or open the folder in VS Code with the Codex extension, or run
-`claude`). `AGENTS.md` in this folder tells the agent how the files are
+Install the agent once: the Codex extension for VS Code (from the
+Extensions panel, sign in with your ChatGPT account), or the Codex CLI
+(`npm install -g @openai/codex`, needs Node.js), or Claude Code. Then
+**Start > Tacitus Lite > Ask Codex** opens a terminal in the mail
+folder with Codex running; in VS Code, open `Documents\OutlookMail` as
+the folder. `AGENTS.md` in this folder tells the agent how the files are
 laid out, to search before answering, to prefer the newest message from
 the office that owns a rule, and to cite the file it answered from. Ask
 in plain words:
@@ -124,10 +122,11 @@ Python with a test suite that runs on Linux, macOS and Windows.
 
 | What | Where | Proves |
 |---|---|---|
-| `tests/test_render.py`, `test_dump.py`, `test_draft.py` | any OS, `py -m pytest` | file names, Markdown, incremental runs, drafts, exit codes, against a fake Outlook object model (`tests/fake_outlook.py`) that mirrors the real one's shapes |
+| `tests/test_*.py` | any OS, `py -m pytest` | file names, Markdown, incremental runs, drafts, exit codes, against a fake Outlook object model (`tests/fake_outlook.py`) that mirrors the real one's shapes |
 | GitHub Actions, `windows-latest` | CI | the same suite on Windows, pywin32 installs and imports, and the scripts answer exit 2 cleanly when no Outlook is present |
 | `tests/eval_codex.py` | a machine with the Codex CLI | the agent, given the fixture mailbox and `AGENTS.md`, answers the parking question with the newer rule and cites the right file |
-| `py outlook_dump.py selftest --draft` | the PC with Outlook | the real COM calls: connect, account, folders, read, dump, draft |
+| GitHub Actions, `windows-latest`, packaging job | CI | PyInstaller builds both executables and the frozen pywin32 works; Inno Setup builds the installer; a silent install on the runner creates the files, the PATH entry and the scheduled task, and a silent uninstall removes them |
+| Start > Tacitus Lite > Self-test (`tacitus-lite selftest --draft`) | the PC with Outlook | the real COM calls: connect, account, folders, read, dump, draft |
 
 Only the last row needs Outlook. Run it on any Windows machine with
 classic Outlook signed in to a mailbox; the fixture suite and CI cover

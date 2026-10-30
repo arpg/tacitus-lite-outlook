@@ -49,21 +49,22 @@ clicks Send there.
    `Sent-Items/` for length, greeting and sign-off, and match them. Do
    not use em dashes. State the facts and stop.
 2. Reply to a message:
-   `py make_draft.py --reply-to "mail/Inbox/2026/<file>.md" --body-file drafts/<name>.txt`
+   `tacitus-lite draft --reply-to "mail/Inbox/2026/<file>.md" --body-file drafts/<name>.txt`
    (`--sender-only` for Reply instead of Reply All). New message:
-   `py make_draft.py --to <address> --subject "<subject>" --body-file drafts/<name>.txt`
+   `tacitus-lite draft --to <address> --subject "<subject>" --body-file drafts/<name>.txt`
+   From a source checkout the same command is `py tacitus_lite.py draft ...`.
 3. Tell the owner: "The draft is in Outlook > Drafts. Read it, then
    Send." Do not paste the whole draft into the chat unless asked.
 
-If `make_draft.py` prints "Outlook not available", classic Outlook is
+If the command prints "Outlook not available", classic Outlook is
 not open or the New Outlook toggle is on; tell the owner that and stop.
 
 ## Keeping the copy fresh
 
-`py outlook_dump.py` copies new mail since the last run; the owner's
-scheduled task runs it every 30 minutes. `py outlook_dump.py status`
-shows how many messages are on disk and the newest date; say the date
-when a question depends on very recent mail.
+`tacitus-lite dump` copies new mail since the last run; the owner's
+scheduled task runs it every 30 minutes. `tacitus-lite status` shows
+how many messages are on disk and the newest date; say the date when a
+question depends on very recent mail.
 
 ## What not to do
 

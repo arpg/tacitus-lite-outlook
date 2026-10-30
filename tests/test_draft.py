@@ -97,7 +97,7 @@ def test_selftest_passes_against_the_fake(tmp_path, mailbox, monkeypatch, capsys
 def test_dump_and_status_cli_against_the_fake(tmp_path, mailbox, monkeypatch, capsys):
     app, ns = mailbox
     monkeypatch.setattr(outlook_dump, "connect", lambda: (app, ns))
-    monkeypatch.setattr(outlook_dump, "ROOT", tmp_path)
+    monkeypatch.setenv("TACITUS_LITE_HOME", str(tmp_path))
     assert outlook_dump.main(["dump", "--full"]) == 0
     assert outlook_dump.main(["status"]) == 0
     out = capsys.readouterr().out

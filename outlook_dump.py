@@ -19,9 +19,9 @@ from pathlib import Path
 
 from outlook_lite import __version__
 from outlook_lite.dump import OutlookUnavailable, connect, dump, iter_messages, resolve_folder
+from outlook_lite.paths import home
 from outlook_lite.render import MAIL_DIR, State
 
-ROOT = Path(__file__).resolve().parent
 DEFAULT_FOLDERS = ["Inbox", "Sent Items"]
 
 
@@ -35,8 +35,8 @@ def cmd_dump(args) -> int:
     except OutlookUnavailable as e:
         say(f"Outlook not available: {e}")
         return 2
-    say(f"outlook_dump {__version__}: {'full' if args.full else 'incremental'} run into {ROOT / MAIL_DIR}")
-    counts = dump(ns, ROOT, args.folders, full=args.full, addresses=not args.no_addresses,
+    say(f"outlook_dump {__version__}: {'full' if args.full else 'incremental'} run into {home() / MAIL_DIR}")
+    counts = dump(ns, home(), args.folders, full=args.full, addresses=not args.no_addresses,
                   limit=args.limit, log=say)
     for name, n in counts.items():
         say(f"  {name}: {n} new")
@@ -45,9 +45,9 @@ def cmd_dump(args) -> int:
 
 
 def cmd_status(args) -> int:
-    state = State(ROOT)
+    state = State(home())
     if not state.folders:
-        say(f"no mail on disk yet ({ROOT / MAIL_DIR} is empty); run `py outlook_dump.py`")
+        say(f"no mail on disk yet ({home() / MAIL_DIR} is empty); run `py outlook_dump.py`")
         return 0
     for name, f in state.folders.items():
         say(f"{name}: {len(f['seen'])} messages, newest {f.get('watermark') or 'unknown'}")

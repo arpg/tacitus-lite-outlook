@@ -1,0 +1,26 @@
+name: release
+
+# A tag v* runs the whole CI (tests, freeze, installer, silent install
+# check) and attaches the installer to a GitHub release.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: TacitusLiteOutlook-Setup
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: TacitusLiteOutlook-Setup.exe
+          generate_release_notes: true
